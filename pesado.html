@@ -1,0 +1,147 @@
+<div style="
+background: url('https://image.freepik.com/fotos-gratis/selecao-de-fast-food-incluindo-pizza-sanduiches-shaurma-salada-batatas-grelhadas-e-sopa_114579-3033.jpg') no-repeat;
+background-size: cover;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+opacity: .3;
+z-index: -1"></div>
+<div style="text-align: center">
+  <div class="title">
+    <h1>PIZZARIA PESADO</h1>
+  </div>
+
+  <div class="pizza">
+    <h3>Pizza</h3>
+    <select id="tamanho" onchange="atualizaTempoEValor()">
+      <option value="">Escolha o tamanho</option>
+    </select>
+  </div>
+
+  <div class="sabores">
+    <h3>Sabores</h3>
+    <select id="sabores" onchange="atualizaTempoEValor()">
+      <option value="">Escolha um Sabor</option>
+    </select>
+  </div>
+
+  <div class="adicionais">
+    <h3>Adicionais</h3>
+    <select id="adicionais" onchange="atualizaTempoEValor()">
+      <option value="">Escolha um Adicional</option>
+    </select>
+  </div>
+
+  <div class="Tempo">
+    <h3>Tempo</h3>
+    <input id="tempo" type="text" value="0" readonly="readonly">
+  </div>
+
+  <div class="Valor">
+    <h3>Valor</h3>
+    <input id="valor" type="text" value="0" readonly="readonly">
+  </div>
+</div>
+
+<script LANGUAGE="JavaScript" TYPE="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    pegaTamanho();
+    pegaSabores();
+    pegaAdicionais();
+    atualizaTempoEValor();
+  });
+
+  let arrayTamanho;
+  let arraySabores;
+  let arrayAdicionais;
+
+  function pegaTamanho(){
+    let tamanhoSelect = document.getElementById("tamanho");
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", 'http://localhost:8000/tamanho/', false );
+    xmlHttp.send();
+    if (xmlHttp.status == 200){
+      arrayTamanho = JSON.parse(xmlHttp.responseText);
+      let option = "<option value=''>Escolha o tamanho</option>"
+      arrayTamanho.map(function(elem) {
+        option += `<option value='${elem.id}'>${elem.nome}</option>`;
+      });
+      tamanhoSelect.innerHTML = option;
+    } else {
+        alert("Falha ao pegar tamanho");
+    }
+  }
+
+  function pegaSabores(){
+    let saboresSelect = document.getElementById("sabores");
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", 'http://localhost:8000/sabores/', false );
+    xmlHttp.send();
+    if (xmlHttp.status == 200){
+      arraySabores = JSON.parse(xmlHttp.responseText);
+      let option = "<option value=''>Escolha um Sabor</option>"
+      arraySabores.map(function(elem) {
+        option += `<option value='${elem.id}'>${elem.nome}</option>`;
+      });
+      saboresSelect.innerHTML = option;
+    } else {
+        alert("Falha ao pegar sabores");
+    }
+  }
+
+  function pegaAdicionais(){
+    let adicionaisSelect = document.getElementById("adicionais");
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", 'http://localhost:8000/adicionais/', false );
+    xmlHttp.send();
+    if (xmlHttp.status == 200){
+      arrayAdicionais = JSON.parse(xmlHttp.responseText);
+      let option = "<option value=''>Escolha um Adicional</option>"
+      arrayAdicionais.map(function(elem) {
+        option += `<option value='${elem.id}'>${elem.nome}</option>`;
+      });
+      adicionaisSelect.innerHTML = option;
+    } else {
+        alert("Falha ao pegar adicionais");
+    }
+  }
+
+  function atualizaTempoEValor(){
+    let tamanhoSelect = document.getElementById("tamanho");
+    let saboresSelect = document.getElementById("sabores");
+    let adicionaisSelect = document.getElementById("adicionais");
+
+    let tempoInput = document.getElementById("tempo");
+    let valorInput = document.getElementById("valor");
+
+    let tempo = 0;
+    let valor = 0;
+
+    arrayTamanho.map(function(elem) {
+      if(tamanhoSelect.value == elem.id){
+        tempo = tempo + elem.tempo;
+        valor = valor + elem.valor;
+      }
+    });
+
+    arraySabores.map(function(elem) {
+      if(saboresSelect.value == elem.id){
+        tempo = tempo + elem.tempo;
+        valor = valor + elem.valor;
+      }
+    });
+
+    arrayAdicionais.map(function(elem) {
+      if(adicionaisSelect.value == elem.id){
+        tempo = tempo + elem.tempo;
+        valor = valor + elem.valor;
+      }
+    });
+
+    tempoInput.value = tempo;
+    valorInput.value = valor;
+
+  }
+</script>
